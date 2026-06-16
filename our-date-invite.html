@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanYour.Date — Ask Someone Out the Fun Way</title>
+<style>
+  :root{
+    --pink-50:#fff5f9;--pink-100:#ffe4ef;--pink-200:#ffc7dd;--pink-300:#ff9ec4;
+    --pink-400:#ff6fa5;--pink-500:#ec4480;--rose-600:#c2185b;--rose-700:#9d1349;
+    --ink:#4a2438;--muted:#8a5e72;--accent:#ec4480;--shadow:0 18px 50px rgba(214,51,108,.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--pink-50);line-height:1.55;}
+  a{color:inherit;text-decoration:none;cursor:pointer;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:999px;font-family:inherit;font-weight:700;cursor:pointer;transition:transform .12s,box-shadow .12s,background .2s;}
+  .btn-primary{background:linear-gradient(135deg,var(--pink-400),var(--rose-600));color:#fff;padding:15px 30px;font-size:16px;box-shadow:0 10px 24px rgba(236,68,128,.4);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(236,68,128,.55);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn-ghost{background:#fff;color:var(--rose-600);padding:14px 26px;font-size:15px;border:2px solid var(--pink-200);}
+  .btn-ghost:hover{background:var(--pink-100);}
+  .eyebrow{display:inline-block;background:var(--pink-100);color:var(--rose-600);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:6px 14px;border-radius:999px;margin-bottom:18px;}
+
+  header.nav{position:sticky;top:0;z-index:40;background:rgba(255,245,249,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--pink-100);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:66px;}
+  .logo-txt{font-weight:800;font-size:21px;color:var(--rose-600);}
+  .logo-txt span{color:var(--pink-400);}
+  .nav-right{display:flex;align-items:center;gap:20px;}
+  .nav-right a{font-weight:600;color:var(--muted);}
+  .nav-right a:hover{color:var(--rose-600);}
+
+  .view{display:none;}
+  .view.active{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .hero{padding:64px 0 56px;}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+  .hero h1{font-size:46px;line-height:1.1;color:var(--rose-700);margin-bottom:20px;}
+  .hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--pink-400),var(--rose-600));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.lead{font-size:18px;color:var(--muted);margin-bottom:28px;max-width:46ch;}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;}
+  .hero-note{font-size:13px;color:var(--muted);margin-top:16px;}
+
+  .phone{width:300px;max-width:84vw;margin:0 auto;background:#1f1226;border-radius:38px;padding:14px;box-shadow:var(--shadow);}
+  .screen{border-radius:28px;min-height:480px;padding:30px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--pink-200),var(--pink-300));}
+  .screen .emoji{font-size:52px;margin-bottom:10px;}
+  .screen h3{color:#fff;font-size:23px;text-shadow:0 2px 8px rgba(157,19,73,.4);margin-bottom:6px;}
+  .screen .qtag{color:#fff;opacity:.9;font-size:13px;margin-bottom:22px;}
+  .demo-btns{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:54px;}
+  #hYes{background:#fff;color:var(--rose-600);padding:12px 26px;font-size:16px;border-radius:999px;border:none;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(157,19,73,.3);transition:transform .12s;}
+  #hNo{background:rgba(255,255,255,.25);color:#fff;padding:11px 22px;font-size:15px;border-radius:999px;border:2px solid rgba(255,255,255,.6);font-weight:700;cursor:pointer;transition:transform .12s;}
+  #hTaunt{color:#fff;font-size:12px;min-height:16px;margin-top:14px;}
+  .runaway{position:absolute;}
+
+  .proof{background:linear-gradient(135deg,var(--rose-600),var(--pink-500));color:#fff;text-align:center;padding:46px 0;}
+  .proof .num{font-size:42px;font-weight:800;display:block;}
+  .proof .lbl{font-size:15px;opacity:.92;}
+  .proof p{max-width:42ch;margin:6px auto 22px;opacity:.95;}
+
+  section.block{padding:72px 0;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 46px;}
+  .section-head h2{font-size:34px;color:var(--rose-700);margin-bottom:12px;}
+  .section-head p{color:var(--muted);font-size:17px;}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .card{background:#fff;border:1px solid var(--pink-100);border-radius:22px;padding:28px;box-shadow:0 8px 24px rgba(214,51,108,.07);transition:transform .15s,box-shadow .15s;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(214,51,108,.14);}
+  .card .ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:var(--pink-100);margin-bottom:16px;}
+  .card h3{font-size:20px;color:var(--rose-600);margin-bottom:8px;}
+  .card p{color:var(--muted);font-size:15px;}
+  .card .step{font-size:13px;font-weight:800;color:var(--pink-400);letter-spacing:.08em;}
+  .cta-band{background:linear-gradient(135deg,var(--pink-400),var(--rose-600));color:#fff;text-align:center;padding:66px 0;}
+  .cta-band h2{font-size:30px;max-width:680px;margin:0 auto 26px;line-height:1.25;}
+
+  footer{background:#2a1322;color:#f3d9e6;padding:52px 0 26px;}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:34px;margin-bottom:30px;}
+  footer .logo-txt{color:#fff;font-size:24px;}footer .logo-txt span{color:var(--pink-300);}
+  footer p.desc{color:#caa7ba;margin:12px 0;max-width:38ch;font-size:14px;}
+  footer h4{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#e58bb3;margin-bottom:14px;}
+  footer ul{list-style:none;}footer li{margin-bottom:9px;}
+  footer a{color:#d8b6c7;font-size:14px;}footer a:hover{color:#fff;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:#b58aa0;font-size:13px;}
+
+  .wiz-overlay{position:fixed;inset:0;z-index:60;background:rgba(74,36,56,.45);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
+  .wiz-overlay.show{display:flex;}
+  .wiz-card{background:#fff;border-radius:24px;max-width:760px;width:100%;box-shadow:var(--shadow);overflow:hidden;}
+  .wiz-body{padding:26px 30px 0;}
+  .progress{height:6px;background:var(--pink-100);border-radius:999px;overflow:hidden;}
+  .progress span{display:block;height:100%;background:linear-gradient(90deg,var(--pink-400),var(--rose-600));transition:width .3s;}
+  .step-top{display:flex;justify-content:space-between;align-items:flex-start;margin:14px 0 6px;}
+  .step-count{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.05em;}
+  .step-x{background:var(--pink-100);border:none;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--rose-600);}
+  .wiz-card h2{font-size:25px;color:var(--rose-700);margin-bottom:4px;}
+  .wiz-card .hint{color:var(--muted);margin-bottom:20px;font-size:14px;}
+  .wiz-card .req{color:var(--rose-600);font-weight:700;}
+  .step{display:none;}.step.active{display:block;animation:fade .25s ease;}
+  label{display:block;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  input,textarea{width:100%;padding:13px 15px;border:2px solid var(--pink-200);border-radius:12px;font-family:inherit;font-size:15px;background:#fff;color:var(--ink);}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent);}
+  textarea{resize:vertical;min-height:80px;font-weight:700;}
+  .opt-note{font-size:11px;font-weight:700;color:var(--muted);background:var(--pink-100);padding:2px 8px;border-radius:6px;margin-left:8px;text-transform:uppercase;}
+  .gifsearch{display:flex;gap:8px;margin-bottom:12px;}
+  .gifsearch input{flex:1;}
+  .gifsearch .btn{flex:none;padding:0 22px;}
+  .gifresults{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:230px;overflow-y:auto;margin-bottom:12px;}
+  .gifresults:empty{display:none;}
+  .gifresults img{width:100%;height:78px;object-fit:cover;border-radius:10px;cursor:pointer;border:3px solid transparent;background:var(--pink-100);}
+  .gifresults img:hover{border-color:var(--pink-300);}
+  .gifresults img.sel{border-color:var(--rose-600);}
+  .gif-msg{font-size:13px;color:var(--muted);margin-bottom:10px;grid-column:1/-1;}
+  .gif-sel-note{font-size:12px;color:var(--rose-600);font-weight:700;margin-bottom:8px;display:none;}
+  .toggle-card{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--pink-200);border-radius:16px;padding:16px 18px;margin-bottom:14px;cursor:pointer;transition:all .15s;}
+  .toggle-card.on{border-color:var(--pink-400);background:#fff5f9;}
+  .toggle-card .tt{font-weight:800;}
+  .toggle-card .td{font-size:13px;color:var(--muted);}
+  .tg{width:52px;height:28px;border-radius:999px;background:#e7c4d4;position:relative;transition:background .2s;flex:none;}
+  .tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .toggle-card.on .tg{background:linear-gradient(135deg,var(--pink-400),var(--rose-600));}
+  .toggle-card.on .tg::after{transform:translateX(24px);}
+  .seg{display:flex;background:var(--pink-100);border-radius:12px;padding:4px;margin-bottom:18px;}
+  .seg button{flex:1;border:none;background:none;padding:10px;border-radius:9px;font-family:inherit;font-weight:700;cursor:pointer;color:var(--muted);}
+  .seg button.on{background:#fff;color:var(--rose-600);box-shadow:0 2px 6px rgba(214,51,108,.12);}
+  .dt-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:10px;align-items:center;}
+  .dt-row .del{background:var(--pink-100);border:none;width:38px;height:38px;border-radius:10px;cursor:pointer;color:var(--rose-600);font-size:16px;}
+  .add-link{color:var(--rose-600);font-weight:700;cursor:pointer;font-size:14px;display:inline-block;margin-top:4px;}
+  .tile-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  .tile{background:#fff;border:2px solid var(--pink-200);border-radius:16px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .12s;font-weight:600;font-size:13px;}
+  .tile:hover{border-color:var(--pink-400);transform:translateY(-2px);}
+  .tile.sel{border-color:transparent;background:linear-gradient(135deg,var(--pink-400),var(--rose-600));color:#fff;}
+  .logo{display:inline-grid;place-items:center;border-radius:30%;box-shadow:0 4px 12px rgba(0,0,0,.16);line-height:1;}
+  .tile .logo{margin:0 auto 9px;}
+  .recap-item{display:flex;align-items:center;gap:14px;border:2px solid var(--pink-100);border-radius:16px;padding:14px 16px;margin-bottom:12px;}
+  .recap-item.has{background:#fff5f9;border-color:var(--pink-200);}
+  .recap-item .ri{width:42px;height:42px;border-radius:50%;background:var(--pink-100);display:grid;place-items:center;font-size:20px;flex:none;}
+  .recap-item .rk{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+  .recap-item .rv{font-weight:700;}
+  .recap-item .edit{margin-left:auto;background:none;border:none;color:var(--rose-600);cursor:pointer;font-size:16px;}
+  .wiz-foot{display:flex;gap:12px;padding:20px 30px 26px;}
+  .wiz-foot .btn{flex:1;}.wiz-foot .btn-ghost{flex:0 0 auto;}
+
+  .ideas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .idea{background:#fff;border-radius:20px;overflow:hidden;border:1px solid var(--pink-100);box-shadow:0 8px 24px rgba(214,51,108,.07);transition:transform .15s;}
+  .idea:hover{transform:translateY(-4px);}
+  .idea .top{height:90px;display:grid;place-items:center;font-size:42px;}
+  .idea .body{padding:18px 20px;}.idea h3{color:var(--rose-600);font-size:18px;margin-bottom:6px;}
+  .idea p{color:var(--muted);font-size:14px;margin-bottom:12px;}.idea .use{color:var(--rose-600);font-weight:700;font-size:14px;}
+  .faq-item{background:#fff;border:1px solid var(--pink-100);border-radius:16px;margin-bottom:14px;overflow:hidden;}
+  .faq-q{padding:18px 22px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+  .faq-q .pm{color:var(--pink-400);font-size:22px;transition:transform .2s;}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;color:var(--muted);padding:0 22px;}
+  .faq-item.open .faq-a{max-height:260px;padding:0 22px 18px;}
+  .faq-item.open .pm{transform:rotate(45deg);}
+
+  .fs{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;overflow:hidden;background:linear-gradient(160deg,#ffc7dd,#ff9ec4);}
+  .fs .card2{background:rgba(255,255,255,.16);backdrop-filter:blur(6px);border-radius:28px;padding:40px 34px;max-width:520px;width:92vw;max-height:92vh;overflow:auto;position:relative;}
+  .fs .gifimg{max-width:230px;width:80%;border-radius:16px;margin:0 auto 16px;display:none;box-shadow:0 8px 22px rgba(0,0,0,.25);}
+  .fs .emoji{font-size:64px;margin-bottom:10px;}
+  .fs h2{color:#fff;font-size:30px;text-shadow:0 2px 12px rgba(0,0,0,.25);margin-bottom:10px;}
+  .fs .detail{color:#fff;font-size:16px;opacity:.95;margin-bottom:24px;}
+  .fbtns{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:70px;}
+  #fsYes{background:#fff;color:var(--rose-600);padding:16px 40px;font-size:20px;border-radius:999px;border:none;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2);transition:transform .12s;}
+  #fsNo{background:rgba(255,255,255,.22);color:#fff;padding:14px 30px;font-size:18px;border-radius:999px;border:2px solid rgba(255,255,255,.7);font-weight:700;cursor:pointer;transition:transform .12s;}
+  #fsTaunt{color:#fff;margin-top:18px;min-height:20px;font-size:15px;}
+  .date-opts{display:flex;flex-direction:column;gap:10px;margin:6px 0 18px;}
+  .date-opt{background:rgba(255,255,255,.85);border:none;border-radius:14px;padding:12px 16px;font-family:inherit;font-weight:700;color:var(--rose-700);cursor:pointer;font-size:15px;transition:transform .1s;display:flex;align-items:center;gap:12px;justify-content:center;}
+  .date-opt:hover{transform:scale(1.02);}
+  .date-opt.sel{background:#fff;box-shadow:0 0 0 3px var(--rose-700) inset;}
+  .fsClose{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.25);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;z-index:5;}
+  .fsMusic{position:absolute;top:18px;left:22px;background:rgba(255,255,255,.25);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;z-index:5;}
+  .yay-msg{margin-top:20px;background:rgba(255,255,255,.18);border-radius:14px;padding:14px;text-align:left;}
+  .yay-msg label{color:#fff;margin-bottom:8px;}
+  .yay-msg .mrow{display:flex;gap:8px;}
+  .yay-msg input{flex:1;padding:10px 12px;border-radius:10px;border:none;font-size:13px;}
+  .yay-msg button{background:#fff;color:var(--rose-600);border:none;border-radius:10px;padding:0 16px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .bg-heart{position:absolute;font-size:24px;opacity:.4;animation:flo 9s linear infinite;pointer-events:none;}
+  @keyframes flo{0%{transform:translateY(100vh) scale(.6);opacity:0;}15%{opacity:.5;}85%{opacity:.5;}100%{transform:translateY(-15vh) scale(1.1);opacity:0;}}
+
+  .share{margin-top:6px;background:#fff5f9;border:2px dashed var(--pink-200);border-radius:14px;padding:16px;display:none;}
+  .share .mrow{display:flex;gap:8px;margin-top:8px;}.share input{font-size:13px;}
+
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr;}.hero h1{font-size:36px;}
+    .cards,.ideas-grid{grid-template-columns:1fr;}.foot-grid{grid-template-columns:1fr;}
+    .tile-grid{grid-template-columns:repeat(3,1fr);}
+  }
+</style>
+<script>window.__INVITE_DATA__="eyJxIjoiU2FuYSBBa2JhciEgV291bGQgeW91IGxpa2UgdG8gZ28gb24gYSBkYXRlIHdpdGggbWU/IiwicWciOiJodHRwczovL21lZGlhMy5naXBoeS5jb20vbWVkaWEvdjEuWTJsa1BUYzVNR0kzTmpFeFp6aGtkak01TTJWcGFqRjFORzAxYURnMWVqWjRPWE0zWW1ReU9HcGpibXN6TjJOdlpIaHlheVpsY0QxMk1WOXBiblJsY201aGJGOW5hV1pmWW5sZmFXUW1ZM1E5Wncvd3ZZTlNxQkFNRFZ4OENFWWt0L2dpcGh5LmdpZiIsInIiOjEsImciOjAsImgiOiIiLCJkbSI6Im9wZW4iLCJkIjpbeyJkYXRlIjoiIiwidGltZSI6IiJ9XSwiZm8iOlsiQnVyZ2VyIiwiUGl6emEiLCJQYXN0YSIsIkljZSBDcmVhbSJdLCJhYyI6WyJQaWNuaWMiLCJNdXNldW0iLCJDb29raW5nIiwiTW92aWUiXSwiZXgiOiJodHRwczovL21lZGlhMS5naXBoeS5jb20vbWVkaWEvdjEuWTJsa1BUYzVNR0kzTmpFeFlXWjVZWGg0YUhKeVpubHpNVEJoYTNKcGNXMDJaV056Wm1oeE9XMXJOMjkyYkhoM1lUZzJaU1psY0QxMk1WOXBiblJsY201aGJGOW5hV1pmWW5sZmFXUW1ZM1E5WncvVGJSa3ViY3FsZ0Jrc0VxTXY0L2dpcGh5LmdpZiJ9";</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo-txt" onclick="go('home')">PlanYour<span>.Date</span></a>
+    <nav class="nav-right">
+      <a onclick="go('ideas')">Date ideas</a>
+      <a onclick="go('faq')">FAQ</a>
+      <button class="btn btn-primary" onclick="openWizard()">Get Started</button>
+    </nav>
+  </div>
+</header>
+
+<div class="view active" id="view-home">
+  <section class="hero"><div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">💌 Interactive date invites</span>
+      <h1>The Most Fun Way to <em>Ask Someone Out</em></h1>
+      <p class="lead">The invite they'll screenshot, show their friends, and remember for years. Build it in a guided wizard, send one file or link — no app, no signup.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="openWizard()">Create Your Free Invitation</button>
+        <a class="btn btn-ghost" href="#how">See How It Works</a>
+      </div>
+      <p class="hero-note">✨ Free to build — start in seconds, no account needed.</p>
+    </div>
+    <div><div class="phone"><div class="screen" id="hScreen">
+      <div id="hAsk"><div class="emoji">🥺💕</div><h3>Would you like to go on a date with me?</h3>
+        <div class="qtag">Tap an answer 👇</div>
+        <div class="demo-btns"><button id="hYes">Yes 💖</button><button id="hNo">No</button></div>
+        <div id="hTaunt"></div></div>
+      <div id="hYay" style="display:none;"><div class="emoji">🎉💞🥳</div><h3>Yay! It's a date!</h3><div class="qtag">I knew it 😊</div></div>
+    </div></div></div>
+  </div></section>
+
+  <section class="proof"><div class="wrap">
+    <span class="num">104,754+</span><span class="lbl">Couples</span>
+    <p>have already sent theirs. Don't let yours wait.</p>
+    <button class="btn btn-ghost" onclick="openWizard()">Make yours now</button>
+  </div></section>
+
+  <section class="block" id="how"><div class="wrap">
+    <div class="section-head"><span class="eyebrow">How it works</span><h2>Three steps to the perfect date invite</h2><p>Build it in minutes. Send one file or link. Watch the magic happen.</p></div>
+    <div class="cards">
+      <div class="card"><div class="ico">✏️</div><span class="step">STEP 1</span><h3>Create</h3><p>Answer 8 quick prompts — question, game mechanics, dates, food &amp; activities.</p></div>
+      <div class="card"><div class="ico">📲</div><span class="step">STEP 2</span><h3>Share</h3><p>Download a self-contained invite file (or link) and send it anywhere.</p></div>
+      <div class="card"><div class="ico">💖</div><span class="step">STEP 3</span><h3>Get a YES</h3><p>Watch them play, including the legendary runaway NO button.</p></div>
+      <div class="card"><div class="ico">🎭</div><h3>Game mechanics</h3><p>Toggle the runaway NO and the growing YES to dial up the drama.</p></div>
+      <div class="card"><div class="ico">🍽️</div><h3>Pick the plan</h3><p>Offer food and activity options so they help choose the date.</p></div>
+      <div class="card" onclick="go('ideas')"><div class="ico">💡</div><h3>Date ideas</h3><p>Browse curated ideas when you need a little inspiration.</p></div>
+    </div>
+  </div></section>
+
+  <section class="cta-band"><div class="wrap"><h2>Every day you wait is another ordinary text they forget. Make it unforgettable.</h2>
+    <button class="btn btn-ghost" onclick="openWizard()">Create Your Invitation</button></div></section>
+</div>
+
+<div class="view" id="view-ideas"><section class="block"><div class="wrap">
+  <div class="section-head"><span class="eyebrow">Inspiration</span><h2>Date ideas</h2><p>Stuck on what to suggest? Tap one to start an invite with it.</p></div>
+  <div class="ideas-grid" id="ideasGrid"></div>
+</div></section></div>
+
+<div class="view" id="view-faq"><section class="block"><div class="wrap" style="max-width:780px;">
+  <div class="section-head"><span class="eyebrow">Questions</span><h2>Frequently asked</h2></div>
+  <div id="faqList"></div>
+</div></section></div>
+
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div><div class="logo-txt">PlanYour<span>.Date</span></div><p class="desc">Create interactive date invites they'll actually remember. One file or link, seconds to make — no app needed.</p></div>
+    <div><h4>Product</h4><ul><li><a onclick="openWizard()">Create your invitation</a></li><li><a onclick="go('home');location.hash='#how'">How it works</a></li><li><a onclick="go('ideas')">Date ideas</a></li><li><a onclick="go('faq')">FAQ</a></li></ul></div>
+    <div><h4>Legal</h4><ul><li><a>Terms</a></li><li><a>Privacy</a></li><li><a>Cookies</a></li></ul></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 PlanYour.Date clone — demo build.</span><span>Made with 💖 for date night</span></div>
+</div></footer>
+
+<div class="wiz-overlay" id="wizOverlay"><div class="wiz-card">
+  <div class="wiz-body">
+    <div class="progress"><span id="bar"></span></div>
+    <div class="step-top"><span class="step-count" id="stepCount">STEP 1 OF 8</span><button class="step-x" onclick="closeWizard()">✕</button></div>
+
+    <div class="step active" data-step="0">
+      <h2>Ask Your Question</h2>
+      <label>Your question</label>
+      <textarea id="w_q">Would you like to go on a date with me?</textarea>
+      <div style="margin-top:16px;"><label>Reaction GIF <span class="opt-note">optional</span></label>
+        <div class="gifsearch"><input class="gifq" placeholder="Search GIFs — e.g. nervous, please, cute"><button class="btn btn-primary gifgo">Search</button></div>
+        <div class="gif-sel-note" data-note="qgif">✓ GIF selected</div>
+        <div class="gifresults" data-results="qgif"></div>
+        <input id="w_qgif" placeholder="…or paste a GIF / image URL"></div>
+    </div>
+
+    <div class="step" data-step="1">
+      <h2>Turn Up the Drama</h2><p class="hint">Add game mechanics to make it more fun. Both are optional.</p>
+      <div class="toggle-card on" id="tg_runaway" onclick="toggleTg('runaway')">
+        <div><div class="tt">Enable "Runaway" 🏃</div><div class="td">The NO button moves away when hovered.</div></div><div class="tg"></div></div>
+      <div class="toggle-card" id="tg_grow" onclick="toggleTg('grow')">
+        <div><div class="tt">Enable "Growing YES" 🔍</div><div class="td">Clicking NO makes the YES button grow bigger.</div></div><div class="tg"></div></div>
+    </div>
+
+    <div class="step" data-step="2">
+      <h2>Happy GIF</h2><p class="hint">Pick a GIF that shows your vibe when they say yes! <span class="opt-note">optional</span></p>
+      <div class="gifsearch"><input class="gifq" placeholder="Search GIFs — e.g. happy dance, excited, yay"><button class="btn btn-primary gifgo">Search</button></div>
+      <div class="gif-sel-note" data-note="happy">✓ GIF selected</div>
+      <div class="gifresults" data-results="happy"></div>
+      <input id="w_happy" placeholder="…or paste a GIF / image URL">
+    </div>
+
+    <div class="step" data-step="3">
+      <h2>The Date</h2><p class="hint">Suggest one or more options. Leave blank to keep it a surprise.</p>
+      <div class="seg"><button class="on" id="seg_specific" onclick="setDateMode('specific')">Specific Dates</button><button id="seg_open" onclick="setDateMode('open')">Surprise me</button></div>
+      <div id="dateList"></div>
+      <span class="add-link" id="addDate" onclick="addDateRow()">+ Add another date &amp; time</span>
+    </div>
+
+    <div class="step" data-step="4">
+      <h2>Food</h2><p class="hint">Select the food options you'd like to offer, or add your own. <span class="opt-note">optional</span></p>
+      <div class="tile-grid" id="foodGrid"></div>
+      <div style="margin-top:14px;"><input id="w_foodCustom" placeholder="Add your own (e.g. Thai street food)"></div>
+    </div>
+
+    <div class="step" data-step="5">
+      <h2>Activity</h2><p class="hint" id="actHint">Select activities to offer, or add your own.</p>
+      <div class="tile-grid" id="actGrid"></div>
+      <div style="margin-top:14px;"><input id="w_actCustom" placeholder="Add your own (e.g. arcade night)"></div>
+    </div>
+
+    <div class="step" data-step="6">
+      <h2>Excitement GIF</h2><p class="hint">Show how excited you are when they confirm the date! <span class="opt-note">optional</span></p>
+      <div class="gifsearch"><input class="gifq" placeholder="Search GIFs — e.g. celebration, lets go, hyped"><button class="btn btn-primary gifgo">Search</button></div>
+      <div class="gif-sel-note" data-note="excite">✓ GIF selected</div>
+      <div class="gifresults" data-results="excite"></div>
+      <input id="w_excite" placeholder="…or paste a GIF / image URL">
+    </div>
+
+    <div class="step" data-step="7">
+      <h2>Recap</h2><p class="hint">Tap the pencil to jump back and edit anything.</p>
+      <div id="recap"></div>
+      <div class="share" id="shareBox">
+        <label style="text-transform:none;color:var(--rose-600);">📲 Send it to them — works on any device:</label>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:12px;" onclick="downloadInvite()">⬇️ Download invite file (.html)</button>
+        <p class="hint" style="margin:0 0 14px;">Save this file and AirDrop / email / message it. Opening it on their phone or computer plays the invite straight away — no app, no login.</p>
+        <label style="text-transform:none;color:var(--rose-600);">🔗 Or a shareable link (works if the page is hosted online):</label>
+        <div class="mrow"><input id="shareLink" readonly=""><button class="btn btn-ghost" id="copyBtn" onclick="copyLink()">Copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wiz-foot">
+    <button class="btn btn-ghost" id="backBtn" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next Step →</button>
+  </div>
+</div></div>
+
+<div class="fs" id="fs">
+  <button class="fsClose" onclick="closeFs()">✕</button>
+  <button class="fsMusic" id="fsMusic" onclick="toggleMusic()">🔊</button>
+  <div class="card2">
+    <div id="fsAsk">
+      <img class="gifimg" id="fsQGif" alt="">
+      <div class="emoji" id="fsEmoji">🥺💕</div>
+      <h2 id="fsQ"></h2>
+      <div class="fbtns"><button id="fsYes">Yes 💖</button><button id="fsNo">No</button></div>
+      <div id="fsTaunt"></div>
+    </div>
+    <div id="fsChoose" style="display:none;">
+      <img class="gifimg" id="fsHappyGif" alt="">
+      <div class="emoji" id="chEmoji">🥰</div>
+      <h2 id="chTitle"></h2>
+      <div class="detail" id="chSub"></div>
+      <div class="date-opts" id="chOpts"></div>
+      <button class="btn btn-primary" id="chNext" style="width:100%;margin-top:6px;" disabled="">Next →</button>
+    </div>
+    <div id="fsDone" style="display:none;">
+      <img class="gifimg" id="fsExciteGif" alt="">
+      <div class="emoji">🎊💞🥳</div>
+      <h2>It's a date!</h2>
+      <div class="detail" id="fsDoneDetail"></div>
+      <div class="yay-msg"><label>💬 Send them the good news:</label>
+        <div class="mrow"><input id="yayMsg" readonly=""><button onclick="copyYay()" id="yayCopyBtn">Copy</button></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* clean snapshot of the page before JS mutates it — used to export a portable invite file */
+var PRISTINE='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+
+/* ---------- DATA ---------- */
+const FOODS=[
+  {e:'🍔',l:'Burger',g:'#ffb347,#ff7e5f'},{e:'🍕',l:'Pizza',g:'#ff9a44,#ff5e62'},{e:'🍝',l:'Pasta',g:'#ffd86f,#fc6262'},{e:'🥗',l:'Salad',g:'#a8e063,#56ab2f'},{e:'🍽️',l:'Restaurant',g:'#f6d365,#fda085'},
+  {e:'🍣',l:'Sushi',g:'#ff5f8f,#ff9a9e'},{e:'🌮',l:'Tacos',g:'#f7b733,#fc4a1a'},{e:'🍖',l:'BBQ',g:'#d38312,#a83279'},{e:'🥞',l:'Brunch',g:'#f8b500,#fceabb'},{e:'🍦',l:'Ice Cream',g:'#f78ca0,#a6c1ee'}
+];
+const ACTS=[
+  {e:'🎳',l:'Bowling',g:'#667eea,#764ba2'},{e:'🥾',l:'Hiking',g:'#56ab2f,#a8e063'},{e:'🚴',l:'Biking',g:'#43cea2,#185a9d'},{e:'🎬',l:'Movie',g:'#834d9b,#d04ed6'},{e:'🎵',l:'Concert',g:'#ff6a00,#ee0979'},
+  {e:'🧺',l:'Picnic',g:'#f7971e,#ffd200'},{e:'🍳',l:'Cooking',g:'#ff512f,#dd2476'},{e:'🖼️',l:'Museum',g:'#3a7bd5,#3a6073'},{e:'⛳',l:'Mini Golf',g:'#11998e,#38ef7d'},{e:'🎨',l:'Art',g:'#fc466b,#3f5efb'}
+];
+const ICON={};[...FOODS,...ACTS].forEach(o=>ICON[o.l]={e:o.e,g:o.g});
+function badge(emoji,grad,size){const s=size||54;return '<span class="logo" style="width:'+s+'px;height:'+s+'px;font-size:'+Math.round(s*0.5)+'px;background:linear-gradient(135deg,'+grad+')">'+emoji+'</span>';}
+const IDEAS=[
+  {e:'🌅',t:'Sunrise picnic',d:'Coffee, pastries and a quiet view to start the day.',act:'Picnic'},
+  {e:'🎡',t:'Carnival night',d:'Rides, lights and questionable fried food. Pure fun.',act:'Mini Golf'},
+  {e:'🍳',t:'Cook together',d:'Pick a recipe, make a mess, eat something great.',act:'Cooking'},
+  {e:'🚲',t:'Bike & ice cream',d:'A lazy ride that ends in dessert. Always wins.',act:'Biking'},
+  {e:'🎬',t:'Movie marathon',d:'Pajamas, popcorn and a comfort-film triple bill.',act:'Movie'},
+  {e:'🖼️',t:'Gallery wander',d:'Art, opinions and a slow coffee afterwards.',act:'Museum'},
+  {e:'⭐',t:'Stargazing drive',d:'Blanket, snacks and somewhere far from the lights.',act:'Hiking'},
+  {e:'🎳',t:'Bowling & burgers',d:'Low stakes, high fun. Loser buys the fries.',act:'Bowling'},
+  {e:'🎵',t:'Live music night',d:'Find a small gig and let the night carry you.',act:'Concert'}
+];
+const FAQS=[
+  {q:'Do I need to create an account?',a:'No. You can build an invite and export it with no signup. (The real site adds a sign-up at the final Save step.)'},
+  {q:'How do I share my invite?',a:'Finish the 8-step wizard, then download a self-contained invite file and send it by message, email or AirDrop. Opening it shows just the invite.'},
+  {q:'What are the game mechanics?',a:'Two optional toggles: the Runaway NO (the NO button dodges away) and the Growing YES (every NO attempt makes YES bigger).'},
+  {q:'Can I add GIFs?',a:'Yes — search GIFs or paste a URL for the question, the happy reaction, and the excitement reaction. They appear at the matching moment.'},
+  {q:'How do food and activities work?',a:'Pick options to offer. After they say yes, they choose from your suggestions to lock in the plan.'},
+  {q:'Will it work on phones?',a:'Yes. The invite is responsive and the NO button dodges on tap as well as hover.'}
+];
+
+/* ---------- STATE ---------- */
+const state={
+  q:'Would you like to go on a date with me?',qgif:'',
+  runaway:true,grow:false,happy:'',
+  dateMode:'specific',dates:[{date:'',time:''}],
+  foods:[],foodCustom:'',acts:[],actCustom:'',excite:''
+};
+let step=0;const TOTAL=8;
+
+/* ---------- ROUTER ---------- */
+function go(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');window.scrollTo(0,0);}
+function openWizard(){document.getElementById('wizOverlay').classList.add('show');step=0;showStep();}
+function closeWizard(){document.getElementById('wizOverlay').classList.remove('show');}
+
+/* ---------- BUILD UI ---------- */
+function buildTiles(arr,grid,key){
+  const el=document.getElementById(grid);
+  arr.forEach(o=>{
+    const d=document.createElement('div');d.className='tile';d.innerHTML=badge(o.e,o.g)+'<div>'+o.l+'</div>';
+    d.onclick=()=>{const ref=state[key];const i=ref.indexOf(o.l);if(i>=0){ref.splice(i,1);d.classList.remove('sel');}else{ref.push(o.l);d.classList.add('sel');}updateNext();};
+    el.appendChild(d);
+  });
+}
+buildTiles(FOODS,'foodGrid','foods');
+buildTiles(ACTS,'actGrid','acts');
+
+const ig=document.getElementById('ideasGrid');
+const grad=['#ffc7dd,#ff9ec4','#ffd9a0,#ff9e7d','#d9c7ff,#b39eff','#b8f0d9,#7de0c0','#bfe0ff,#8ec4ff','#ffb3b3,#ff7d8a'];
+IDEAS.forEach((it,i)=>{
+  const d=document.createElement('div');d.className='idea';
+  d.innerHTML='<div class="top" style="background:linear-gradient(135deg,'+grad[i%grad.length]+')">'+it.e+'</div><div class="body"><h3>'+it.t+'</h3><p>'+it.d+'</p><span class="use">Use this idea →</span></div>';
+  d.querySelector('.use').onclick=()=>{state.acts=[it.act];openWizard();setTimeout(()=>{document.querySelectorAll('#actGrid .tile').forEach(t=>{t.classList.toggle('sel',t.textContent.indexOf(it.act)>=0);});},60);};
+  ig.appendChild(d);
+});
+
+const fl=document.getElementById('faqList');
+FAQS.forEach(f=>{const d=document.createElement('div');d.className='faq-item';
+  d.innerHTML='<div class="faq-q">'+f.q+'<span class="pm">+</span></div><div class="faq-a"><p>'+f.a+'</p></div>';
+  d.querySelector('.faq-q').onclick=()=>d.classList.toggle('open');fl.appendChild(d);});
+
+function renderDates(){
+  const el=document.getElementById('dateList');el.innerHTML='';
+  if(state.dateMode==='open'){el.innerHTML='<p class="hint" style="margin:0;">No specific date — they’ll just say yes to <b>you</b>. 💕</p>';document.getElementById('addDate').style.display='none';return;}
+  document.getElementById('addDate').style.display='inline-block';
+  state.dates.forEach((d,i)=>{
+    const row=document.createElement('div');row.className='dt-row';
+    row.innerHTML='<input placeholder="e.g. Saturday June 21" value="'+(d.date||'')+'"><input placeholder="e.g. 7:00pm" value="'+(d.time||'')+'"><button class="del">🗑️</button>';
+    const ins=row.querySelectorAll('input');
+    ins[0].oninput=e=>state.dates[i].date=e.target.value;
+    ins[1].oninput=e=>state.dates[i].time=e.target.value;
+    row.querySelector('.del').onclick=()=>{state.dates.splice(i,1);if(!state.dates.length)state.dates.push({date:'',time:''});renderDates();};
+    el.appendChild(row);
+  });
+}
+function addDateRow(){state.dates.push({date:'',time:''});renderDates();}
+function setDateMode(m){state.dateMode=m;document.getElementById('seg_specific').classList.toggle('on',m==='specific');document.getElementById('seg_open').classList.toggle('on',m==='open');renderDates();}
+renderDates();
+
+function toggleTg(k){state[k]=!state[k];document.getElementById(k==='runaway'?'tg_runaway':'tg_grow').classList.toggle('on',state[k]);}
+
+/* ---------- GIF SEARCH (Giphy) ---------- */
+const GIPHY_KEY='dc6zaTOxFJmzC';
+const GIF_INPUT={qgif:'w_qgif',happy:'w_happy',excite:'w_excite'};
+document.querySelectorAll('.gifgo').forEach(btn=>{
+  const stepEl=btn.closest('.step');
+  const q=stepEl.querySelector('.gifq');
+  const results=stepEl.querySelector('.gifresults');
+  const key=results.dataset.results;
+  const urlInput=document.getElementById(GIF_INPUT[key]);
+  const note=stepEl.querySelector('.gif-sel-note');
+  async function run(){
+    const term=q.value.trim();if(!term)return;
+    results.innerHTML='<div class="gif-msg">Searching…</div>';
+    try{
+      const url='https://api.giphy.com/v1/gifs/search?api_key='+GIPHY_KEY+'&q='+encodeURIComponent(term)+'&limit=16&rating=pg-13';
+      const r=await fetch(url);const j=await r.json();
+      if(!j.data||!j.data.length){results.innerHTML='<div class="gif-msg">No GIFs found — try another search, or paste a URL below.</div>';return;}
+      results.innerHTML='';
+      j.data.forEach(g=>{
+        const im=g.images||{};
+        const thumb=(im.fixed_width_small||im.fixed_height_small||im.fixed_height||im.downsized||im.original||{}).url;
+        const full=(im.downsized_medium||im.fixed_height||im.original||{}).url;
+        if(!thumb||!full)return;
+        const el=document.createElement('img');el.src=thumb;el.loading='lazy';el.alt=g.title||'gif';
+        el.onclick=()=>{results.querySelectorAll('img').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');urlInput.value=full;note.style.display='block';};
+        results.appendChild(el);
+      });
+    }catch(e){results.innerHTML='<div class="gif-msg">Couldn’t reach the GIF service (offline or rate-limited). Paste a GIF/image URL below instead.</div>';}
+  }
+  btn.addEventListener('click',run);
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run();}});
+  urlInput.addEventListener('input',()=>{note.style.display=urlInput.value?'block':'none';results.querySelectorAll('img').forEach(x=>x.classList.remove('sel'));});
+});
+
+/* ---------- WIZARD NAV ---------- */
+function captureText(){
+  state.q=document.getElementById('w_q').value.trim()||'Would you like to go on a date with me?';
+  state.qgif=document.getElementById('w_qgif').value.trim();
+  state.happy=document.getElementById('w_happy').value.trim();
+  state.excite=document.getElementById('w_excite').value.trim();
+  state.foodCustom=document.getElementById('w_foodCustom').value.trim();
+  state.actCustom=document.getElementById('w_actCustom').value.trim();
+}
+function allActivities(){const a=state.acts.slice();if(state.actCustom)a.push(state.actCustom);return a;}
+function allFoods(){const a=state.foods.slice();if(state.foodCustom)a.push(state.foodCustom);return a;}
+
+function updateNext(){
+  const next=document.getElementById('nextBtn');
+  if(step===5){
+    const needAct=allFoods().length===0;
+    document.getElementById('actHint').innerHTML=needAct?'Select activities to offer, or add your own. <span class="req">Since you skipped food, you must select at least one activity.</span>':'Select activities to offer, or add your own.';
+    next.disabled = needAct && allActivities().length===0;
+  } else next.disabled=false;
+}
+function showStep(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===step));
+  document.getElementById('bar').style.width=((step+1)/TOTAL*100)+'%';
+  document.getElementById('stepCount').textContent='STEP '+(step+1)+' OF '+TOTAL;
+  document.getElementById('backBtn').style.visibility=step===0?'hidden':'visible';
+  const optional=[2,4,6];
+  const next=document.getElementById('nextBtn');
+  next.textContent = step===TOTAL-1?'✨ Create invite' : (optional.indexOf(step)>=0?'Skip →':'Next Step →');
+  if(step===7)buildRecap();
+  updateNext();
+}
+function prevStep(){captureText();if(step>0){step--;showStep();}}
+function nextStep(){captureText();if(step<TOTAL-1){step++;showStep();}else finish();}
+function gotoStep(s){captureText();step=s;showStep();}
+
+function datesText(){return state.dates.filter(d=>d.date||d.time).map(d=>[d.date,d.time].filter(Boolean).join(' at ')).join('  •  ');}
+function buildRecap(){
+  const r=document.getElementById('recap');const dt=datesText();
+  const items=[
+    {i:'💬',k:'Question',v:state.q,s:0},
+    {i:'🎭',k:'Drama',v:[state.runaway?'Runaway NO':null,state.grow?'Growing YES':null].filter(Boolean).join(' + ')||'None',s:1},
+    {i:'😊',k:'Happy GIF',v:state.happy?'Added':'Skipped',s:2},
+    {i:'📅',k:'The Date',v:state.dateMode==='open'?'Surprise':(dt||'Not set'),s:3},
+    {i:'🍽️',k:'Food',v:allFoods().join(', ')||'Skipped',s:4},
+    {i:'🎯',k:'Activity',v:allActivities().join(', ')||'Skipped',s:5},
+    {i:'🤩',k:'Excitement GIF',v:state.excite?'Added':'Skipped',s:6}
+  ];
+  r.innerHTML=items.map(it=>'<div class="recap-item '+(it.v&&it.v!=='Skipped'&&it.v!=='None'&&it.v!=='Not set'?'has':'')+'"><div class="ri">'+it.i+'</div><div><div class="rk">'+it.k+'</div><div class="rv">'+it.v+'</div></div><button class="edit" onclick="gotoStep('+it.s+')">✏️</button></div>').join('');
+  document.getElementById('shareBox').style.display='none';
+}
+function finish(){makeLink();document.getElementById('shareBox').style.display='block';launch();}
+
+/* ---------- INVITE ---------- */
+function planLine(){const bits=[];const f=allFoods(),a=allActivities();if(a.length)bits.push(a.join(' / '));if(f.length)bits.push(f.join(' / '));return bits.join(' + ');}
+function setGif(id,url){const el=document.getElementById(id);if(url){el.src=url;el.style.display='block';el.onerror=()=>{el.style.display='none';};}else el.style.display='none';}
+function fillInvite(){
+  document.getElementById('fsQ').textContent=state.q;
+  setGif('fsQGif',state.qgif);setGif('fsHappyGif',state.happy);setGif('fsExciteGif',state.excite);
+  document.getElementById('fsAsk').style.display='block';
+  document.getElementById('fsChoose').style.display='none';
+  document.getElementById('fsDone').style.display='none';
+  document.getElementById('fsYes').style.transform='';
+  const no=document.getElementById('fsNo');no.classList.remove('runaway');no.style.cssText='';
+}
+
+let chSteps=[],chIndex=0;const choices={activity:'',food:'',date:''};
+function buildChooserSteps(){
+  const steps=[];const acts=allActivities(),foods=allFoods();
+  if(acts.length)steps.push({key:'activity',emoji:'🎉',title:"Let's do something!",sub:'Choose an activity',opts:acts.map(a=>({label:a,val:a}))});
+  if(foods.length)steps.push({key:'food',emoji:'🍔',title:'And to eat?',sub:'Pick the food',opts:foods.map(f=>({label:f,val:f}))});
+  const ds=state.dates.filter(d=>d.date||d.time);let dateOpts;
+  if(state.dateMode==='open'||ds.length===0)dateOpts=[{label:'💕 Surprise me — you choose!',val:'a surprise date'}];
+  else dateOpts=ds.map(d=>{const l=[d.date,d.time].filter(Boolean).join(' at ');return{label:'📅 '+l,val:l};});
+  steps.push({key:'date',emoji:'📅',title:'When works?',sub:'Choose a date & time',opts:dateOpts});
+  return steps;
+}
+function startChooser(){
+  chSteps=buildChooserSteps();chIndex=0;choices.activity=choices.food=choices.date='';
+  document.getElementById('fsAsk').style.display='none';
+  document.getElementById('fsChoose').style.display='block';
+  showChooserCard();confetti();
+}
+function showChooserCard(){
+  const st=chSteps[chIndex];
+  document.getElementById('fsHappyGif').style.display=(chIndex===0&&state.happy)?'block':'none';
+  document.getElementById('chEmoji').textContent=st.emoji;
+  document.getElementById('chTitle').textContent=st.title;
+  document.getElementById('chSub').textContent=st.sub;
+  const wrap=document.getElementById('chOpts');wrap.innerHTML='';
+  st.opts.forEach(o=>{
+    const b=document.createElement('button');b.className='date-opt';
+    const ic=ICON[o.val];
+    b.innerHTML=(ic?badge(ic.e,ic.g,38):'')+'<span>'+o.label+'</span>';
+    b.onclick=()=>{wrap.querySelectorAll('.date-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');choices[st.key]=o.val;document.getElementById('chNext').disabled=false;};
+    wrap.appendChild(b);
+  });
+  const next=document.getElementById('chNext');next.disabled=true;
+  next.textContent=(chIndex===chSteps.length-1)?'✨ Lock it in':'Next →';
+}
+function chNextStep(){if(chIndex<chSteps.length-1){chIndex++;showChooserCard();}else finishDone();}
+function finishDone(){
+  document.getElementById('fsChoose').style.display='none';
+  document.getElementById('fsDone').style.display='block';
+  const bits=[];if(choices.activity)bits.push(choices.activity);if(choices.food)bits.push(choices.food);
+  const plan=bits.join(' + ');const when=choices.date;
+  document.getElementById('fsDoneDetail').textContent=[plan,when&&when!=='a surprise date'?when:(when?'(a surprise!)':'')].filter(Boolean).join(' — ');
+  let msg="It's a date! 🎉💖";if(plan)msg+=' '+plan+'.';if(when&&when!=='a surprise date')msg+=' '+when+'.';else if(when)msg+=' (Date TBD — a surprise!)';
+  document.getElementById('yayMsg').value=msg;
+  confetti();celebrateMusic();
+}
+
+let fsWired=false;
+function launch(){
+  fillInvite();
+  document.getElementById('fs').style.display='flex';
+  document.getElementById('fsMusic').textContent=musicOn?'🔊':'🔇';
+  spawnHearts();startMusic();
+  if(!fsWired){
+    setupNoButton();
+    document.getElementById('fsYes').addEventListener('click',startChooser);
+    document.getElementById('chNext').addEventListener('click',chNextStep);
+    fsWired=true;
+  } else setupNoButton();
+}
+function setupNoButton(){
+  const noBtn=document.getElementById('fsNo'),yesBtn=document.getElementById('fsYes'),taunt=document.getElementById('fsTaunt'),container=document.querySelector('#fs .card2');
+  const lines=["Are you sure? 🥺","Really?? 😢","Think about it 💭","Please? 🙏","Pretty please 🥹","You're breaking my heart 💔","Can't catch me! 🏃","Just say yes 😤"];
+  let s=1,n=0;
+  noBtn.onmouseenter=null;noBtn.onclick=null;noBtn.ontouchstart=null;
+  function dodge(){
+    if(state.runaway){
+      if(!noBtn.classList.contains('runaway'))noBtn.classList.add('runaway');
+      const r=container.getBoundingClientRect(),bw=noBtn.offsetWidth,bh=noBtn.offsetHeight,pad=10;
+      noBtn.style.left=(pad+Math.random()*(r.width-bw-pad*2))+'px';
+      noBtn.style.top=(pad+Math.random()*(r.height-bh-pad*2))+'px';
+    }
+    if(state.grow){s=Math.min(s+0.16,2.6);yesBtn.style.transform='scale('+s+')';noBtn.style.transform='scale('+Math.max(1-n*0.07,0.5)+')';}
+    taunt.textContent=lines[n%lines.length];n++;
+  }
+  if(state.runaway)noBtn.addEventListener('mouseenter',dodge);
+  noBtn.addEventListener('touchstart',e=>{e.preventDefault();dodge();},{passive:false});
+  noBtn.addEventListener('click',()=>{if(state.runaway||state.grow){dodge();}else{taunt.textContent=lines[n%lines.length];n++;}});
+}
+function closeFs(){document.getElementById('fs').style.display='none';stopMusic();if(document.getElementById('wizOverlay').classList.contains('show'))document.getElementById('shareBox').style.display='block';}
+
+/* hero demo */
+(function(){const noBtn=document.getElementById('hNo'),yesBtn=document.getElementById('hYes'),taunt=document.getElementById('hTaunt'),c=document.getElementById('hScreen');
+  const lines=["Are you sure? 🥺","Really?? 😢","Think 💭","Please? 🙏","Pretty please 🥹","💔","Can't catch me! 🏃"];let s=1,n=0;
+  function dodge(){if(!noBtn.classList.contains('runaway'))noBtn.classList.add('runaway');const r=c.getBoundingClientRect(),bw=noBtn.offsetWidth,bh=noBtn.offsetHeight,p=10;noBtn.style.left=(p+Math.random()*(r.width-bw-p*2))+'px';noBtn.style.top=(p+Math.random()*(r.height-bh-p*2))+'px';s=Math.min(s+0.16,2.4);yesBtn.style.transform='scale('+s+')';noBtn.style.transform='scale('+Math.max(1-n*0.08,0.5)+')';taunt.textContent=lines[n%lines.length];n++;}
+  noBtn.addEventListener('mouseenter',dodge);noBtn.addEventListener('click',dodge);noBtn.addEventListener('touchstart',e=>{e.preventDefault();dodge();},{passive:false});
+  yesBtn.addEventListener('click',()=>{document.getElementById('hAsk').style.display='none';document.getElementById('hYay').style.display='block';});
+})();
+
+/* effects */
+function spawnHearts(){const fs=document.getElementById('fs');const ch=['💖','💕','💗','🌸','💞'];for(let i=0;i<8;i++){const h=document.createElement('div');h.className='bg-heart';h.textContent=ch[i%ch.length];h.style.left=Math.random()*100+'%';h.style.animationDelay=(Math.random()*6)+'s';h.style.fontSize=(16+Math.random()*22)+'px';fs.appendChild(h);}}
+function confetti(){const cols=['#ff6fa5','#ec4480','#c2185b','#fff','#ffd166'];for(let i=0;i<110;i++){const c=document.createElement('div');c.style.cssText='position:fixed;z-index:200;width:10px;height:10px;pointer-events:none;left:50%;top:42%;border-radius:'+(Math.random()>.5?'50%':'2px')+';background:'+cols[i%cols.length];document.body.appendChild(c);const a=Math.random()*Math.PI*2,v=6+Math.random()*9;let vx=Math.cos(a)*v,vy=Math.sin(a)*v-6,x=0,y=0,r=0;(function f(){vy+=0.34;x+=vx;y+=vy;r+=14;c.style.transform='translate('+x+'px,'+y+'px) rotate('+r+'deg)';c.style.opacity=Math.max(0,1-y/600);if(y<680)requestAnimationFrame(f);else c.remove();})();}}
+
+/* music (synthesized) */
+let actx=null,musicOn=true,loopTimer=null,masterGain=null;
+const MELODY=[523.25,659.25,783.99,659.25,587.33,698.46,587.33,523.25,659.25,783.99,880.00,783.99,659.25,587.33,523.25,0];
+function ensureCtx(){if(!actx){actx=new (window.AudioContext||window.webkitAudioContext)();masterGain=actx.createGain();masterGain.gain.value=0.12;masterGain.connect(actx.destination);}if(actx.state==='suspended')actx.resume();}
+function playNote(f,t,dur){if(!f)return;const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(masterGain);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.9,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+dur);o.start(t);o.stop(t+dur);}
+function scheduleLoop(){if(!musicOn||!actx)return;const st=0.32,t0=actx.currentTime+0.05;MELODY.forEach((f,i)=>playNote(f,t0+i*st,st*0.9));loopTimer=setTimeout(scheduleLoop,MELODY.length*st*1000);}
+function startMusic(){if(!musicOn)return;ensureCtx();clearTimeout(loopTimer);scheduleLoop();}
+function stopMusic(){clearTimeout(loopTimer);}
+function toggleMusic(){musicOn=!musicOn;document.getElementById('fsMusic').textContent=musicOn?'🔊':'🔇';if(musicOn)startMusic();else stopMusic();}
+function celebrateMusic(){if(!musicOn)return;ensureCtx();const n=[523.25,659.25,783.99,1046.50],t0=actx.currentTime+0.02;n.forEach((f,i)=>playNote(f,t0+i*0.12,0.3));}
+
+/* shareable / export */
+function currentState(){return {q:state.q,qg:state.qgif,r:state.runaway?1:0,g:state.grow?1:0,h:state.happy,dm:state.dateMode,d:state.dates,fo:allFoods(),ac:allActivities(),ex:state.excite};}
+function encodeState(){return btoa(unescape(encodeURIComponent(JSON.stringify(currentState()))));}
+function makeLink(){document.getElementById('shareLink').value=location.origin+location.pathname+'#invite='+encodeState();}
+function downloadInvite(){
+  const data=encodeState();
+  const html=PRISTINE.replace('</head>','<scr'+'ipt>window.__INVITE_DATA__="'+data+'";</scr'+'ipt>\n</head>');
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='our-date-invite.html';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+function copyLink(){const i=document.getElementById('shareLink');i.select();if(navigator.clipboard)navigator.clipboard.writeText(i.value);const b=document.getElementById('copyBtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);}
+function copyYay(){const i=document.getElementById('yayMsg');i.select();if(navigator.clipboard)navigator.clipboard.writeText(i.value);const b=document.getElementById('yayCopyBtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);}
+
+/* open via exported file or hosted link */
+(function checkHash(){
+  let payload=window.__INVITE_DATA__||null;
+  if(!payload){const m=location.hash.match(/invite=(.+)$/);if(m)payload=m[1];}
+  if(!payload)return;
+  try{
+    const s=JSON.parse(decodeURIComponent(escape(atob(payload))));
+    state.q=s.q||state.q;state.qgif=s.qg||'';state.runaway=!!s.r;state.grow=!!s.g;state.happy=s.h||'';
+    state.dateMode=s.dm||'specific';state.dates=s.d||[{date:'',time:''}];
+    state.foods=s.fo||[];state.foodCustom='';state.acts=s.ac||[];state.actCustom='';state.excite=s.ex||'';
+    document.querySelector('header.nav').style.display='none';
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    launch();
+    document.querySelector('.fsClose').style.display='none';
+  }catch(e){}
+})();
+</script></body></html>
